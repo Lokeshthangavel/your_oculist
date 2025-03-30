@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Oculist - Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Your Oculist</h1>
+            <p>Non-invasive eye power estimation using Snellen chart feedback</p>
+        </header>
+
+        <main>
+            <div class="results-section">
+                <h2>Your Estimated Eye Power</h2>
+                <p>Based on your vision test, here are the estimated refractive errors:</p>
+                
+                <div class="results-card">
+                    <div class="result-item">
+                        <div class="eye-label">Right Eye:</div>
+                        <div class="prescription">{{ results.right_eye }} D</div>
+                        <div class="vision-value">(Your input: {{ snellen_values.right_eye }})</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="eye-label">Left Eye:</div>
+                        <div class="prescription">{{ results.left_eye }} D</div>
+                        <div class="vision-value">(Your input: {{ snellen_values.left_eye }})</div>
+                    </div>
+                </div>
+                
+                <div class="interpretation">
+                    <h3>What This Means:</h3>
+                    <ul>
+                        <li><strong>Negative values</strong> indicate myopia (nearsightedness)</li>
+                        <li><strong>Positive values</strong> indicate hyperopia (farsightedness)</li>
+                        <li>Values close to zero indicate minimal refractive error</li>
+                    </ul>
+                </div>
+                
+                <div class="disclaimer">
+                    <h3>Important Notes:</h3>
+                    <p>This estimation is based on a simplified model and should not replace professional eye examinations.</p>
+                    <p>Many factors affect vision that cannot be captured by this test, including:</p>
+                    <ul>
+                        <li>Astigmatism</li>
+                        <li>Age-related presbyopia</li>
+                        <li>Other eye conditions</li>
+                    </ul>
+                    <p>Please consult an eye care professional for accurate prescriptions.</p>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="/" class="btn-secondary">Take Test Again</a>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Disclaimer: This is a prototype and not a substitute for professional eye examination. Please consult an optometrist for accurate prescriptions.</p>
+        </footer>
+    </div>
+</body>
+</html>
