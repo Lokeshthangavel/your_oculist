@@ -11,7 +11,7 @@
     <div class="container">
         <header>
             <h1>Your Oculist</h1>
-            <p>Non-invasive eye power estimation using Snellen chart feedback</p>
+            <p>Non-invasive eye power estimation using Snellen chart & Duochrome test</p>
         </header>
 
         <main>
@@ -22,23 +22,25 @@
                 <div class="results-card">
                     <div class="result-item">
                         <div class="eye-label">Right Eye:</div>
-                        <div class="prescription">{{ results.right_eye }} D</div>
-                        <div class="vision-value">(Your input: {{ snellen_values.right_eye }})</div>
+                        <div class="prescription">{{ results.right_eye if results.right_eye is not none else 'N/A' }} D</div>
+                        <div class="vision-value">Snellen Input: {{ snellen_values.right_eye if snellen_values.right_eye is not none else 'N/A' }}</div>
+                        <div class="duochrome-value">Duochrome Input: {{ duochrome_values.right_eye if duochrome_values.right_eye is not none else 'N/A' }}</div>
                     </div>
                     
                     <div class="result-item">
                         <div class="eye-label">Left Eye:</div>
-                        <div class="prescription">{{ results.left_eye }} D</div>
-                        <div class="vision-value">(Your input: {{ snellen_values.left_eye }})</div>
+                        <div class="prescription">{{ results.left_eye if results.left_eye is not none else 'N/A' }} D</div>
+                        <div class="vision-value">Snellen Input: {{ snellen_values.left_eye if snellen_values.left_eye is not none else 'N/A' }}</div>
+                        <div class="duochrome-value">Duochrome Input: {{ duochrome_values.left_eye if duochrome_values.left_eye is not none else 'N/A' }}</div>
                     </div>
                 </div>
                 
                 <div class="interpretation">
                     <h3>What This Means:</h3>
                     <ul>
-                        <li><strong>Negative values</strong> indicate myopia (nearsightedness)</li>
-                        <li><strong>Positive values</strong> indicate hyperopia (farsightedness)</li>
-                        <li>Values close to zero indicate minimal refractive error</li>
+                        <li><strong>Negative values</strong> indicate myopia (nearsightedness).</li>
+                        <li><strong>Positive values</strong> indicate hyperopia (farsightedness).</li>
+                        <li>Values close to zero indicate minimal refractive error.</li>
                     </ul>
                 </div>
                 
@@ -55,13 +57,13 @@
                 </div>
                 
                 <div class="action-buttons">
-                    <a href="/" class="btn-secondary">Take Test Again</a>
+                    <a href="/" class="btn-primary">Take Test Again</a>
                 </div>
             </div>
         </main>
 
         <footer>
-            <p>Disclaimer: This is a prototype and not a substitute for professional eye examination. Please consult an optometrist for accurate prescriptions.</p>
+            <p>Disclaimer: This is a prototype and not a substitute for a professional eye examination. Please consult an optometrist for accurate prescriptions.</p>
         </footer>
     </div>
 </body>
