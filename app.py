@@ -1,52 +1,44 @@
-from flask import Flask, render_template, request, redirect, url_for
-import os
+from flask import Flask, render_template, request, jsonify
 import numpy as np
-from model.data_processor import DataProcessor
-from model.eye_power_predictor import EyePowerPredictor
+import joblib  # Load your trained model
 
-app = Flask(__name__, static_folder='web/static', template_folder='web/templates')
+app = Flask(__name__)
 
-# Initialize the models
-@app.before_first_request
-def initialize():
-    # Check if models exist, if not, train them
-    if not os.path.exists('model/saved_models/model_RE.pkl'):
-        print("Training models...")
-        data_path = 'data/Phase_1_WE_ZACE_prevalence_and_attiitudes.csv'
-        processor = DataProcessor(data_path)
-        processor.load_data()
-        processor.clean_data()
-        processor.train_model()
-        processor.visualize_data()
-        print("Models trained successfully!")
+# Load the pre-trained model
+model = joblib.load("eye_power_model.pkl")  # Ensure your model is in the correct path
+
+def calculate_eye_power(snellen_score, duochrome_result):
+    """
+    Function to predict eye power based on Snellen score and duochrome results.
+    """
+    input_data = np.array([[snellen_score, duochrome_result]])
+    prediction = model.predict(input_data)
+    return prediction[0]
 
 @app.route('/')
-def index():
+def home():
     return render_template('index.html')
 
-@app.route('/estimate', methods=['POST'])
-def estimate():
-    # Get form data
-    right_eye = request.form.get('right_eye')
-    left_eye = request.form.get('left_eye')
-    
-    # Convert Snellen values to decimal
-    right_eye_decimal = EyePowerPredictor.snellen_to_decimal(right_eye)
-    left_eye_decimal = EyePowerPredictor.snellen_to_decimal(left_eye)
-    
-    # Make prediction
-    predictor = EyePowerPredictor()
-    results = predictor.predict(right_eye_decimal, left_eye_decimal)
-    
-    # Render results template
-    return render_template('result.html', 
-                          results=results,
-                          snellen_values={'right_eye': right_eye, 'left_eye': left_eye})
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        # Extract form data
+        right_eye = int(request.form.get('right_eye'))
+        left_eye = int(request.form.get('left_eye'))
+        duochrome = int(request.form.get('duochrome'))
+        
+        # Compute eye power for both eyes
+        right_eye_power = calculate_eye_power(right_eye, duochrome)
+        left_eye_power = calculate_eye_power(left_eye, duochrome)
+        
+        result = {
+            "right_eye_power": round(right_eye_power, 2),
+            "left_eye_power": round(left_eye_power, 2)
+        }
+        
+        return render_template('results.html', result=result)
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 if __name__ == '__main__':
-    # Create necessary directories
-    os.makedirs('model/saved_models', exist_ok=True)
-    os.makedirs('web/static/images', exist_ok=True)
-    
-    # Start the Flask app
     app.run(debug=True)
