@@ -7,217 +7,233 @@
 
 body {
     font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to right, #1e3c72, #2a5298);
+    color: white;
     line-height: 1.6;
-    color: #333;
-    background-color: #f5f8fa;
-}
-
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Header Styles */
-header {
     text-align: center;
-    margin-bottom: 40px;
-    padding: 20px 0;
-    border-bottom: 1px solid #e1e4e8;
+    padding: 2rem 1rem;
 }
 
+/* Container */
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+/* Header */
 header h1 {
-    color: #2c3e50;
     font-size: 2.5rem;
-    margin-bottom: 10px;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
 }
 
 header p {
-    color: #7f8c8d;
     font-size: 1.1rem;
 }
 
-/* Main Content Styles */
-main {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    padding: 30px;
-    margin-bottom: 30px;
+/* Main Content */
+.test-section {
+    padding: 2rem;
+    display: none; /* Initially hidden */
+}
+
+.test-section.active {
+    display: block;
 }
 
 h2 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-size: 1.8rem;
+    font-size: 2rem;
+    margin-bottom: 1rem;
 }
 
-h3 {
-    color: #34495e;
-    margin: 15px 0 10px;
-    font-size: 1.3rem;
-}
-
-/* Instructions Section */
+/* Instructions */
 .instructions {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 6px;
-    margin-bottom: 25px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.instructions h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
 }
 
 .instructions ol {
-    margin-left: 20px;
+    text-align: left;
+    padding-left: 1rem;
 }
 
 .instructions li {
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
 }
 
-/* Snellen Chart */
-.snellen-chart {
-    text-align: center;
-    margin: 30px 0;
-}
-
-.snellen-chart img {
+/* Charts */
+.snellen-chart img,
+.duochrome-chart img {
     max-width: 100%;
     height: auto;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 5px;
+    margin-top: 1rem;
 }
 
-/* Form Styles */
+/* Form */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
+    text-align: left;
 }
 
 label {
     display: block;
-    margin-bottom: 8px;
     font-weight: 500;
+    margin-bottom: 0.5rem;
 }
 
-select {
+select, input[type="text"], input[type="number"] {
     width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-    background-color: white;
-}
-
-.form-actions {
-    margin-top: 30px;
-    text-align: center;
-}
-
-.btn-primary {
-    background-color: #3498db;
-    color: white;
+    padding: 0.8rem;
     border: none;
-    padding: 12px 24px;
-    font-size: 16px;
-    border-radius: 4px;
+    border-radius: 5px;
+    font-size: 1rem;
+    background: white;
+    color: #333;
+    transition: border 0.3s ease-in-out;
+}
+
+/* Focus and Error Handling */
+input:focus, select:focus {
+    outline: none;
+    border: 2px solid #00aaff;
+}
+
+.input-error {
+    border: 2px solid #ff4444 !important;
+    background-color: rgba(255, 68, 68, 0.1);
+}
+
+.error-message {
+    color: #ff4444;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    display: none;
+}
+
+/* Buttons */
+.btn-primary {
+    background: #00aaff;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    color: white;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: 0.3s;
 }
 
 .btn-primary:hover {
-    background-color: #2980b9;
+    background: #0077cc;
 }
 
-.btn-secondary {
-    display: inline-block;
-    background-color: #95a5a6;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    font-size: 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    text-decoration: none;
+/* Loading Animation */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
 }
 
-.btn-secondary:hover {
-    background-color: #7f8c8d;
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top: 4px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
-/* Results Styles */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Animated Transitions */
+.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Results Section */
 .results-section {
+    padding: 2rem;
     text-align: center;
 }
 
 .results-card {
-    background-color: #f8f9fa;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 1.5rem;
     border-radius: 8px;
-    padding: 25px;
-    margin: 30px 0;
-    display: flex;
-    justify-content: space-around;
+    margin-top: 1rem;
 }
 
 .result-item {
-    text-align: center;
-    padding: 15px;
+    margin-bottom: 1rem;
 }
 
 .eye-label {
-    font-weight: 500;
-    margin-bottom: 10px;
-    color: #34495e;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
 .prescription {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 5px;
-    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffcc00;
 }
 
 .vision-value {
-    color: #7f8c8d;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    font-style: italic;
 }
 
-.interpretation, .disclaimer {
-    text-align: left;
-    margin: 30px 0;
-}
-
-.interpretation ul, .disclaimer ul {
-    margin-left: 20px;
-    margin-top: 10px;
-}
-
-.action-buttons {
-    margin-top: 40px;
-}
-
-/* Footer Styles */
+/* Footer */
 footer {
-    text-align: center;
-    padding: 20px 0;
-    color: #7f8c8d;
+    margin-top: 2rem;
     font-size: 0.9rem;
 }
 
-/* Responsive Adjustments */
+/* Accessibility */
+button:focus, select:focus, input:focus {
+    outline: 2px solid #00aaff;
+    outline-offset: 2px;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
     .container {
-        padding: 15px;
+        padding: 1.5rem;
     }
-    
-    main {
-        padding: 20px;
+
+    h1 {
+        font-size: 2rem;
     }
-    
-    .results-card {
-        flex-direction: column;
+
+    h2 {
+        font-size: 1.7rem;
     }
-    
-    .result-item {
-        margin-bottom: 20px;
+
+    .btn-primary {
+        width: 100%;
+        padding: 1rem;
     }
 }
