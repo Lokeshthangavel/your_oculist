@@ -11,72 +11,145 @@
     <div class="container">
         <header>
             <h1>Your Oculist</h1>
-            <p>Non-invasive eye power estimation using Snellen chart feedback</p>
+            <p>Non-invasive eye power estimation using Snellen chart & Duochrome test</p>
+
+            <!-- User Authentication Status -->
+            <nav>
+                {% if session['user_id'] %}
+                    <p>Welcome, {{ session['username'] }}! | <a href="{{ url_for('logout') }}">Logout</a></p>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Login</a> | 
+                    <a href="{{ url_for('register') }}">Register</a>
+                {% endif %}
+            </nav>
         </header>
 
         <main>
-            <div class="test-section">
-                <h2>Vision Test</h2>
-                <p>Please follow the instructions below to complete the vision test.</p>
-                
-                <div class="instructions">
-                    <h3>Instructions:</h3>
-                    <ol>
-                        <li>Position yourself approximately 6 meters (20 feet) away from your screen.</li>
-                        <li>If you wear glasses or contacts, <strong>remove them</strong> for this test.</li>
-                        <li>Cover your left eye and read the smallest line you can see clearly with your right eye.</li>
-                        <li>Repeat for your left eye (covering your right eye).</li>
-                        <li>Select the smallest line you could read for each eye in the form below.</li>
-                    </ol>
-                </div>
+            {% if session['user_id'] %}
+                <!-- Snellen Test Section -->
+                <div id="snellen-test" class="test-section">
+                    <h2>Step 1: Vision Test (Snellen Chart)</h2>
+                    <p>Please select the smallest line you can read clearly.</p>
 
-                <div class="snellen-chart">
-                    <img src="{{ url_for('static', filename='images/snellen_chart.png') }}" alt="Snellen Chart">
-                </div>
-
-                <form id="vision-form" action="/estimate" method="post">
-                    <div class="form-group">
-                        <label for="right-eye">Right Eye (smallest line you can read):</label>
-                        <select id="right-eye" name="right_eye" required>
-                            <option value="">Select...</option>
-                            <option value="6/6">Line 8 (6/6)</option>
-                            <option value="6/9">Line 7 (6/9)</option>
-                            <option value="6/12">Line 6 (6/12)</option>
-                            <option value="6/18">Line 5 (6/18)</option>
-                            <option value="6/24">Line 4 (6/24)</option>
-                            <option value="6/36">Line 3 (6/36)</option>
-                            <option value="6/60">Line 2 (6/60)</option>
-                            <option value="6/120">Line 1 (6/120)</option>
-                        </select>
+                    <div class="snellen-chart">
+                        <img src="{{ url_for('static', filename='images/snellen_chart.png') }}" alt="Snellen Chart">
                     </div>
 
-                    <div class="form-group">
-                        <label for="left-eye">Left Eye (smallest line you can read):</label>
-                        <select id="left-eye" name="left_eye" required>
-                            <option value="">Select...</option>
-                            <option value="6/6">Line 8 (6/6)</option>
-                            <option value="6/9">Line 7 (6/9)</option>
-                            <option value="6/12">Line 6 (6/12)</option>
-                            <option value="6/18">Line 5 (6/18)</option>
-                            <option value="6/24">Line 4 (6/24)</option>
-                            <option value="6/36">Line 3 (6/36)</option>
-                            <option value="6/60">Line 2 (6/60)</option>
-                            <option value="6/120">Line 1 (6/120)</option>
-                        </select>
+                    <form id="snellen-form">
+                        <div class="form-group">
+                            <label for="right-eye">Right Eye:</label>
+                            <select id="right-eye" name="right_eye" required>
+                                <option value="">Select...</option>
+                                <option value="6/6">6/6</option>
+                                <option value="6/9">6/9</option>
+                                <option value="6/12">6/12</option>
+                                <option value="6/18">6/18</option>
+                                <option value="6/24">6/24</option>
+                                <option value="6/36">6/36</option>
+                                <option value="6/60">6/60</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="left-eye">Left Eye:</label>
+                            <select id="left-eye" name="left_eye" required>
+                                <option value="">Select...</option>
+                                <option value="6/6">6/6</option>
+                                <option value="6/9">6/9</option>
+                                <option value="6/12">6/12</option>
+                                <option value="6/18">6/18</option>
+                                <option value="6/24">6/24</option>
+                                <option value="6/36">6/36</option>
+                                <option value="6/60">6/60</option>
+                            </select>
+                        </div>
+
+                        <button type="button" class="btn-primary" onclick="showDuochromeTest()">Next: Duochrome Test</button>
+                    </form>
+                </div>
+
+                <!-- Duochrome Test Section -->
+                <div id="duochrome-test" class="test-section" style="display: none;">
+                    <h2>Step 2: Duochrome Test</h2>
+                    <p>For each eye, select which side appears clearer.</p>
+
+                    <div class="duochrome-chart">
+                        <img src="{{ url_for('static', filename='images/duochrome_chart.png') }}" alt="Duochrome Chart">
                     </div>
 
-                    <div class="form-actions">
+                    <form id="duochrome-form" action="/estimate" method="post">
+                        <input type="hidden" name="right_eye" id="hidden-right-eye">
+                        <input type="hidden" name="left_eye" id="hidden-left-eye">
+
+                        <div class="form-group">
+                            <label for="right-duochrome">Right Eye:</label>
+                            <select id="right-duochrome" name="right_duochrome" required>
+                                <option value="">Select...</option>
+                                <option value="red-clear">Red is clearer</option>
+                                <option value="green-clear">Green is clearer</option>
+                                <option value="equal">Both are equal</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="left-duochrome">Left Eye:</label>
+                            <select id="left-duochrome" name="left_duochrome" required>
+                                <option value="">Select...</option>
+                                <option value="red-clear">Red is clearer</option>
+                                <option value="green-clear">Green is clearer</option>
+                                <option value="equal">Both are equal</option>
+                            </select>
+                        </div>
+
                         <button type="submit" class="btn-primary">Estimate Eye Power</button>
-                    </div>
-                </form>
-            </div>
+                    </form>
+                </div>
+
+                <!-- Past Test Results -->
+                <div id="results-section">
+                    <h2>Your Past Results</h2>
+                    {% if results %}
+                        <ul>
+                            {% for result in results %}
+                                <li>
+                                    <strong>Date:</strong> {{ result.timestamp }}<br>
+                                    <strong>Right Eye:</strong> {{ result.right_eye_snellen }} (Snellen) | {{ result.right_eye_duochrome }} (Duochrome) <br>
+                                    <strong>Left Eye:</strong> {{ result.left_eye_snellen }} (Snellen) | {{ result.left_eye_duochrome }} (Duochrome) <br>
+                                    <strong>Result:</strong> {{ result.result }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No test results found.</p>
+                    {% endif %}
+                </div>
+
+            {% else %}
+                <p><strong>You must <a href="{{ url_for('login') }}">log in</a> to take the eye test.</strong></p>
+            {% endif %}
         </main>
 
         <footer>
-            <p>Disclaimer: This is a prototype and not a substitute for professional eye examination. Please consult an optometrist for accurate prescriptions.</p>
+            <p>Disclaimer: This is a prototype and not a substitute for professional eye examination.</p>
         </footer>
     </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        function showDuochromeTest() {
+            let rightEye = document.getElementById('right-eye').value;
+            let leftEye = document.getElementById('left-eye').value;
+
+            if (!rightEye || !leftEye) {
+                alert("Please select values for both eyes before proceeding.");
+                return;
+            }
+
+            document.getElementById('snellen-test').style.display = 'none';
+            document.getElementById('duochrome-test').style.display = 'block';
+
+            document.getElementById('hidden-right-eye').value = rightEye;
+            document.getElementById('hidden-left-eye').value = leftEye;
+        }
+    </script>
 </body>
 </html>
