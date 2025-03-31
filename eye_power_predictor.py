@@ -10,35 +10,25 @@ class EyePowerPredictor:
         self.load_models()
     
     def load_models(self):
-        """Load the trained models from disk."""
+        """Load trained models from disk."""
         model_dir = 'model/saved_models'
         
-        # Check if models exist
-        if not os.path.exists(f'{model_dir}/model_RE.pkl'):
-            raise FileNotFoundError("Models not found. Please train the models first.")
+        if not os.path.exists(f'{model_dir}/model_RE.pkl') or not os.path.exists(f'{model_dir}/model_LE.pkl'):
+            raise FileNotFoundError("❌ Models not found! Train the models first.")
         
-        # Load the models
-        with open(f'{model_dir}/model_RE.pkl', 'rb') as f:
-            self.model_RE = pickle.load(f)
-        
-        with open(f'{model_dir}/model_LE.pkl', 'rb') as f:
-            self.model_LE = pickle.load(f)
+        try:
+            with open(f'{model_dir}/model_RE.pkl', 'rb') as f:
+                self.model_RE = pickle.load(f)
+            with open(f'{model_dir}/model_LE.pkl', 'rb') as f:
+                self.model_LE = pickle.load(f)
+        except (pickle.UnpicklingError, EOFError) as e:
+            raise RuntimeError("❌ Error loading models! They might be corrupted.") from e
     
     def predict(self, visual_acuity_re, visual_acuity_le):
-        """
-        Predict eye power based on visual acuity.
-        
-        Parameters:
-        visual_acuity_re (float): Visual acuity of right eye in decimal format (0.0-1.0)
-        visual_acuity_le (float): Visual acuity of left eye in decimal format (0.0-1.0)
-        
-        Returns:
-        dict: Predicted eye power for both eyes
-        """
+        """Predict eye power based on visual acuity."""
         if self.model_RE is None or self.model_LE is None:
             self.load_models()
         
-        # Make predictions
         prescription_re = float(self.model_RE.predict([[visual_acuity_re]])[0])
         prescription_le = float(self.model_LE.predict([[visual_acuity_le]])[0])
         
@@ -52,46 +42,15 @@ class EyePowerPredictor:
         }
     
     @staticmethod
-    def snellen_to_decimal(snellen):
-        """
-        Convert Snellen visual acuity to decimal format.
-        
-        Parameters:
-        snellen (str): Visual acuity in Snellen format (e.g., '6/6', '6/12')
-        
-        Returns:
-        float: Visual acuity in decimal format
-        """
-        if '/' not in snellen:
-            return 0.5  # Default value if format is incorrect
-        
-        numerator, denominator = map(float, snellen.split('/'))
-        return numerator / denominator
+    def snellen_to_decimal(snellen_value):
+        """Converts Snellen fraction (e.g., 6/6) to a decimal value (e.g., 1.0)."""
+        try:
+            num, denom = map(int, snellen_value.split('/'))
+            return num / denom  # Example: 6/12 -> 0.5
+        except (ValueError, AttributeError):
+            return None  # Return None if invalid input
     
-    @staticmethod
-    def decimal_to_snellen(decimal):
-        """
-        Convert decimal visual acuity to Snellen format.
-        
-        Parameters:
-        decimal (float): Visual acuity in decimal format (0.0-1.0)
-        
-        Returns:
-        str: Visual acuity in Snellen format
-        """
-        if decimal >= 1.0:
-            return "6/6"
-        elif decimal >= 0.8:
-            return "6/7.5"
-        elif decimal >= 0.67:
-            return "6/9"
-        elif decimal >= 0.5:
-            return "6/12"
-        elif decimal >= 0.33:
-            return "6/18"
-        elif decimal >= 0.25:
-            return "6/24"
-        elif decimal >= 0.1:
-            return "6/60"
-        else:
-            return "< 6/60"
+# Run a test prediction
+if __name__ == "__main__":
+    predictor = EyePowerPredictor()
+    print(predictor.predict(0.5, 0.67))  # Example
